@@ -2,7 +2,6 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 from concurrent.futures import ThreadPoolExecutor
-from get_data import create_graph
 
 # Function to handle request for each holder address
 def fetch_transactions(holder_addr):
@@ -26,7 +25,7 @@ def fetch_transactions(holder_addr):
 task_n = 0
 # Wallet address and API endpoint
 chainName = "eth-mainnet"  # Ethereum Mainnet
-tokenAddress = "0x0d8ca4b20b115D4DA5c13DC45Dd582A5de3e78BF"
+tokenAddress = "0x61035ed28081c1acc38e399c416bfc08fd6e73a1"
 
 url_token = f"https://api.covalenthq.com/v1/{chainName}/tokens/{tokenAddress}/token_holders_v2/?page-size=1000"
 
@@ -51,5 +50,4 @@ with ThreadPoolExecutor(max_workers=8) as executor:
 with open('result.json', 'w') as file:
     json.dump(data, file)
 
-print("CREATING GRAPH")
-create_graph()
+print("Create Graph by running create_graph.py")

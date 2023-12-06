@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 import networkx as nx
 import json
+import community
 
 def create_graph():
     # Read data from the file
@@ -38,6 +39,16 @@ def create_graph():
 
     # Generate positions for the nodes
     pos = nx.spring_layout(G)
+
+    partition = community.best_partition(G, weight='weight')
+
+    num_communities = len(set(partition.values()))
+
+    print(f"Number of communities: {num_communities}")
+
+    # Now use the partition to assign colors to nodes
+    # Each community gets a different color
+    community_colors = {node: partition.get(node) for node in G.nodes()}
 
     # Extract the x and y coordinates and weights
     edge_x = []
@@ -102,6 +113,7 @@ def create_graph():
         node_adjacencies.append(len(adjacencies[1]))
 
     node_trace.marker.color = node_adjacencies
+    node_trace.marker.color = [community_colors[node] for node in G.nodes()]
 
     # Create the figure
     fig = go.Figure(data=[edge_trace, node_trace],
