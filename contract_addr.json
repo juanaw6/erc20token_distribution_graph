@@ -1,0 +1,14 @@
+[
+  {
+    "contract_addr": "0x58981780d8dd17fb9456156074c05999eff0581d",
+    "contract_name": "UniswapV2Pair"
+  },
+  {
+    "contract_addr": "0x61035ed28081c1acc38e399c416bfc08fd6e73a1",
+    "contract_name": "FROUBOT"
+  },
+  {
+    "contract_addr": "0x1111111254eeb25477b68fb85ed929f73a960582",
+    "contract_name": "AggregationRouterV5"
+  }
+]

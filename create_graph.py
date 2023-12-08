@@ -4,16 +4,16 @@ import json
 import community
 
 def create_graph():
-    with open('result.json', 'r') as file:
+    with open('holders.json', 'r') as file:
         data = json.load(file)
 
     G = nx.Graph()
 
     token_sym = 'TOKEN'
     G.add_node(token_sym)
-    contract_addr = ['0x58981780d8dd17fb9456156074c05999eff0581d',
-                    '0x61035ed28081c1acc38e399c416bfc08fd6e73a1',
-                    '0x1111111254eeb25477b68fb85ed929f73a960582']
+    with open('contract_addr.json', 'r') as file :
+        contract_addr_list = json.load(file)
+    contract_addr = [addr['contract_addr'] for addr in contract_addr_list]
     
     total_holder_addr = 0
     for holder in data:
