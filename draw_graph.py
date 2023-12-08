@@ -9,7 +9,8 @@ def create_graph():
 
     G = nx.Graph()
 
-    token_sym = 'TOKEN'
+    token_sym = data['token_symbol']
+    data = data['data']
     G.add_node(token_sym)
     with open('contract_addr.json', 'r') as file :
         contract_addr_list = json.load(file)
@@ -40,7 +41,10 @@ def create_graph():
     print(f"Number of holders: {total_holder_addr}")
     print(f"Number of communities: {num_communities}")
 
+    # Assign a unique color to each community using a rainbow color scheme
     community_colors = {node: partition.get(node) for node in G.nodes()}
+    num_colors = max(list(community_colors.values())) + 1
+    color_scale = [f'hsl({h},80%,50%)' for h in range(0, 360, int(360 / num_colors))]
 
     pos[token_sym] = [0, 0]
 
@@ -79,14 +83,18 @@ def create_graph():
     node_x = []
     node_y = []
     node_text = []
+    node_marker_size = []
     for node in G.nodes():
         x, y = pos[node]
         node_x.append(x)
         node_y.append(y)
-        if node != 'TOKEN' :
-            node_text.append(str(node)[:5] + '..' + str(node)[-2:])
-        else :
+        if node != token_sym:
+            truncated_address = str(node)[:5] + '..' + str(node)[-2:]
+            node_text.append(truncated_address)
+            node_marker_size.append(10)
+        else:
             node_text.append(node)
+            node_marker_size.append(30)
 
     node_trace = go.Scatter(
         x=node_x, y=node_y,
@@ -95,10 +103,12 @@ def create_graph():
         textposition="bottom center",
         hoverinfo='text',
         marker=dict(
-            colorscale='YlGnBu',
-            size=10,
+            colorscale=color_scale,
+            size=node_marker_size,
             color=[],
-            line_width=2))
+            line_width=2,
+            line=dict(color='black')
+        ))
 
     node_adjacencies = []
     for node, adjacencies in enumerate(G.adjacency()):
@@ -107,9 +117,13 @@ def create_graph():
     node_trace.marker.color = node_adjacencies
     node_trace.marker.color = [community_colors[node] for node in G.nodes()]
 
+    # Customize hover text for nodes
+    hover_text = [f"Address: {node}" for node in G.nodes()]
+    node_trace.hovertext = hover_text
+
     fig = go.Figure(data=[edge_trace, node_trace],
                     layout=go.Layout(
-                        title=f'<br>Network Graph of Token Holders, Total Holders: {total_holder_addr}, Total Communities: {num_communities}, Total Contract Addresses: {len(contract_addr)}, Total Actual Holders: {num_communities + len(contract_addr)}',
+                        title=f'<br>Network Graph of {token_sym} Token Holders, Total Holders: {total_holder_addr}, Total Communities (Actual Holder): {num_communities}, Total Contract Addresses: {len(contract_addr)}',
                         titlefont_size=16,
                         showlegend=False,
                         hovermode='closest',
@@ -118,6 +132,7 @@ def create_graph():
                         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                         annotations=edge_annotations
                     ))
+    
     fig.show()
 
 create_graph()

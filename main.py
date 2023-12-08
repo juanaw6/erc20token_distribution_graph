@@ -5,7 +5,6 @@ import json
 from concurrent.futures import ThreadPoolExecutor
 from ratelimit import limits, sleep_and_retry
 
-# Define the rate limit (5 calls per second)
 @sleep_and_retry
 @limits(calls=5, period=1)
 def fetch_transactions(holder_addr):
@@ -31,7 +30,6 @@ def fetch_transactions(holder_addr):
         print(f"TASK {task_n}/{total_holders} FAIL: Get Tx from {holder_addr}")
         fetch_transactions(holder_addr)
 
-# Rest of your code remains the same
 contract_addr_list = []
 chainName = "eth-mainnet"
 url_token = f"https://api.covalenthq.com/v1/{chainName}/tokens/{TOKEN_ADDRESS}/token_holders_v2/?page-size=1000"
@@ -49,13 +47,15 @@ total_holders = len(holders)
 print(f"TASK DONE: Get Holders of Token {ticker_symbol}")
 print(f"TOTAL HOLDERS: {total_holders}")
 task_n = 0
-with ThreadPoolExecutor(max_workers=5) as executor:
+with ThreadPoolExecutor(max_workers=8) as executor:
     data = list(executor.map(fetch_transactions, holders))
 
+export = {'data' : data, 'token_symbol': ticker_symbol}
 with open('holders.json', 'w') as file:
-    json.dump(data, file)
+    json.dump(export, file)
 
 with open('contract_addr.json', 'w') as file:
     json.dump(contract_addr_list, file)
     
-print("Create the graph by running create_graph.py")
+print("Create the graph by running draw_graph.py")
+print("Create the community graph by running draw_community.py")

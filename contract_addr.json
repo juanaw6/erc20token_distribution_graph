@@ -1,14 +1,30 @@
 [
   {
-    "contract_addr": "0x58981780d8dd17fb9456156074c05999eff0581d",
-    "contract_name": "UniswapV2Pair"
+    "contract_addr": "0xaa854688caab725fe17b7d21b46fda5af365985a",
+    "contract_name": "ERC1967Proxy"
   },
   {
-    "contract_addr": "0x61035ed28081c1acc38e399c416bfc08fd6e73a1",
-    "contract_name": "FROUBOT"
+    "contract_addr": "0xe18fa8737578ce628eb697e29c235f19081693da",
+    "contract_name": "GnosisSafeProxy"
   },
   {
-    "contract_addr": "0x1111111254eeb25477b68fb85ed929f73a960582",
-    "contract_name": "AggregationRouterV5"
+    "contract_addr": "0xecc12a85bd1d95b8b766e3195d306fc4cb8f884f",
+    "contract_name": "GnosisSafeProxy"
+  },
+  {
+    "contract_addr": "0xf2aac07f25530f50d296e6b580131774bf5b8206",
+    "contract_name": "WalletSimple"
+  },
+  {
+    "contract_addr": "0x47b36e9984d3edb1676c4011b3fb7af2d75a9036",
+    "contract_name": "GnosisSafeProxy"
+  },
+  {
+    "contract_addr": "0xd1c0c842c57c76517ef7a30ee288a5d8b18960fe",
+    "contract_name": "WalletSimple"
+  },
+  {
+    "contract_addr": "0x88ad09518695c6c3712ac10a214be5109a655671",
+    "contract_name": "EternalStorageProxy"
   }
 ]
