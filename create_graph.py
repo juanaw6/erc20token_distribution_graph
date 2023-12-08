@@ -4,53 +4,46 @@ import json
 import community
 
 def create_graph():
-    # Read data from the file
     with open('result.json', 'r') as file:
         data = json.load(file)
 
-    # Create a graph
     G = nx.Graph()
 
-    # Add a node for the 'token'
-    token_addr = '0x0d8ca4b20b115D4DA5c13DC45Dd582A5de3e78BF'[:5]
-    contract_addr = ["0x0000",
-                    "0x0000"]
-    contract_addr_list = [addr[:5] for addr in contract_addr]
-    G.add_node(token_addr)
-
-    # Add edges from each holder to the 'token' node
+    token_sym = 'TOKEN'
+    G.add_node(token_sym)
+    contract_addr = ['0x58981780d8dd17fb9456156074c05999eff0581d',
+                    '0x61035ed28081c1acc38e399c416bfc08fd6e73a1',
+                    '0x1111111254eeb25477b68fb85ed929f73a960582']
+    
+    total_holder_addr = 0
     for holder in data:
-        if holder is None :
+        if holder is None:
             continue
-        holder_addr = holder['holder_addr'][:5]
-        if holder_addr in contract_addr_list :
+        total_holder_addr += 1
+        holder_addr = holder['holder_addr']
+        if holder_addr in contract_addr:
             continue
-        G.add_edge(holder_addr, token_addr, weight=0)  # Truncate for simplicity
+        G.add_edge(holder_addr, token_sym, weight=0)
         for addr, freq in holder['recent_tx_freq'].items():
-            truncated_addr = addr[:5]  # Truncate for simplicity
-            if truncated_addr in contract_addr_list :
+            if addr in contract_addr:
                 continue
-            # If the edge already exists, update its weight
-            if G.has_edge(holder_addr, truncated_addr):
-                G[holder_addr][truncated_addr]['weight'] += freq
+            if G.has_edge(holder_addr, addr):
+                G[holder_addr][addr]['weight'] += freq
             else:
-                # Otherwise, add a new edge with the initial weight
-                G.add_edge(holder_addr, truncated_addr, weight=freq)
+                G.add_edge(holder_addr, addr, weight=freq)
 
-    # Generate positions for the nodes
-    pos = nx.spring_layout(G)
+    pos = nx.spring_layout(G, seed=42, k=0.2)
 
     partition = community.best_partition(G, weight='weight')
 
-    num_communities = len(set(partition.values()))
-
+    num_communities = len(set(partition.values())) - 1
+    print(f"Number of holders: {total_holder_addr}")
     print(f"Number of communities: {num_communities}")
 
-    # Now use the partition to assign colors to nodes
-    # Each community gets a different color
     community_colors = {node: partition.get(node) for node in G.nodes()}
 
-    # Extract the x and y coordinates and weights
+    pos[token_sym] = [0, 0]
+
     edge_x = []
     edge_y = []
     edge_weights = []
@@ -60,31 +53,29 @@ def create_graph():
         x1, y1 = pos[edge[1]]
         edge_x.extend([x0, x1, None])
         edge_y.extend([y0, y1, None])
-        
+
         weight = G[edge[0]][edge[1]]['weight']
         edge_weights.append(weight)
-        
-        # Calculate the midpoint of the edge for annotation
-        edge_annotations.append(
-            dict(
-                x=(x0 + x1) / 2,
-                y=(y0 + y1) / 2,
-                xref="x",
-                yref="y",
-                text=str(weight),
-                showarrow=False,
-                font=dict(size=10)
-            )
-        )
 
-    # Create the edge trace
+        if weight > 0:
+            edge_annotations.append(
+                dict(
+                    x=(x0 + x1) / 2,
+                    y=(y0 + y1) / 2,
+                    xref="x",
+                    yref="y",
+                    text=str(weight),
+                    showarrow=False,
+                    font=dict(size=8),
+                )
+            )
+
     edge_trace = go.Scatter(
         x=edge_x, y=edge_y,
         line=dict(width=0.5, color='#888'),
         hoverinfo='none',
         mode='lines')
 
-    # Create the node trace
     node_x = []
     node_y = []
     node_text = []
@@ -92,7 +83,10 @@ def create_graph():
         x, y = pos[node]
         node_x.append(x)
         node_y.append(y)
-        node_text.append(node)
+        if node != 'TOKEN' :
+            node_text.append(str(node)[:5] + '..' + str(node)[-2:])
+        else :
+            node_text.append(node)
 
     node_trace = go.Scatter(
         x=node_x, y=node_y,
@@ -101,13 +95,11 @@ def create_graph():
         textposition="bottom center",
         hoverinfo='text',
         marker=dict(
-            showscale=True,
             colorscale='YlGnBu',
             size=10,
             color=[],
             line_width=2))
 
-    # Set node hover text
     node_adjacencies = []
     for node, adjacencies in enumerate(G.adjacency()):
         node_adjacencies.append(len(adjacencies[1]))
@@ -115,19 +107,17 @@ def create_graph():
     node_trace.marker.color = node_adjacencies
     node_trace.marker.color = [community_colors[node] for node in G.nodes()]
 
-    # Create the figure
     fig = go.Figure(data=[edge_trace, node_trace],
-                layout=go.Layout(
-                    title='<br>Network graph of token holders',
-                    titlefont_size=16,
-                    showlegend=False,
-                    hovermode='closest',
-                    margin=dict(b=20,l=5,r=5,t=40),
-                    xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                    yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                    annotations=edge_annotations  # Add edge annotations
+                    layout=go.Layout(
+                        title=f'<br>Network Graph of Token Holders, Total Holders: {total_holder_addr}, Total Communities: {num_communities}, Total Contract Addresses: {len(contract_addr)}, Total Actual Holders: {num_communities + len(contract_addr)}',
+                        titlefont_size=16,
+                        showlegend=False,
+                        hovermode='closest',
+                        margin=dict(b=0, l=0, r=0, t=0),
+                        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                        annotations=edge_annotations
                     ))
-
     fig.show()
 
 create_graph()
