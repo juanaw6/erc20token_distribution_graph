@@ -1,4 +1,4 @@
-from API_KEY import *
+from config import *
 import requests
 from requests.auth import HTTPBasicAuth
 import json
@@ -47,7 +47,7 @@ total_holders = len(holders)
 print(f"TASK DONE: Get Holders of Token {ticker_symbol}")
 print(f"TOTAL HOLDERS: {total_holders}")
 task_n = 0
-with ThreadPoolExecutor(max_workers=8) as executor:
+with ThreadPoolExecutor(max_workers=7) as executor:
     data = list(executor.map(fetch_transactions, holders))
 
 export = {'data' : data, 'token_symbol': ticker_symbol}

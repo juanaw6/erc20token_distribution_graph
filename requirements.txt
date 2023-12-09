@@ -1,0 +1,12 @@
+certifi==2023.11.17
+charset-normalizer==3.3.2
+idna==3.6
+networkx==3.2.1
+numpy==1.26.2
+packaging==23.2
+plotly==5.18.0
+python-louvain==0.16
+ratelimit==2.2.1
+requests==2.31.0
+tenacity==8.2.3
+urllib3==2.1.0

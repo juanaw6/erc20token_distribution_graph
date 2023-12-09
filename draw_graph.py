@@ -41,7 +41,6 @@ def create_graph():
     print(f"Number of holders: {total_holder_addr}")
     print(f"Number of communities: {num_communities}")
 
-    # Assign a unique color to each community using a rainbow color scheme
     community_colors = {node: partition.get(node) for node in G.nodes()}
     num_colors = min(max(list(community_colors.values())) + 1, 360)
     color_scale = [f'hsl({h},80%,50%)' for h in range(0, 360, int(360 / num_colors))]
@@ -117,7 +116,6 @@ def create_graph():
     node_trace.marker.color = node_adjacencies
     node_trace.marker.color = [community_colors[node] for node in G.nodes()]
 
-    # Customize hover text for nodes
     hover_text = [f"Address: {node}" for node in G.nodes()]
     node_trace.hovertext = hover_text
 
