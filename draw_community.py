@@ -43,7 +43,7 @@ def create_graph():
 
     # Assign a unique color to each community using a rainbow color scheme
     community_colors = {node: partition.get(node) for node in G.nodes()}
-    num_colors = max(list(community_colors.values())) + 1
+    num_colors = min(max(list(community_colors.values())) + 1, 360)
     color_scale = [f'hsl({h},80%,50%)' for h in range(0, 360, int(360 / num_colors))]
 
     pos[token_sym] = [0, 0]
@@ -72,7 +72,7 @@ def create_graph():
                         yref="y",
                         text=str(weight),
                         showarrow=False,
-                        font=dict(size=8),
+                        font=dict(size=16),  # Increased font size for better visibility
                     )
                 )
 
@@ -93,7 +93,7 @@ def create_graph():
         if node != token_sym:
             truncated_address = str(node)[:5] + '..' + str(node)[-2:]
             node_text.append(truncated_address)
-            node_marker_size.append(10)
+            node_marker_size.append(30)
         else:
             node_text.append(node)
             node_marker_size.append(30)
@@ -132,7 +132,7 @@ def create_graph():
                         margin=dict(b=0, l=0, r=0, t=0),
                         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                        annotations=edge_annotations
+                        annotations=edge_annotations,
                     ))
     
     fig.show()

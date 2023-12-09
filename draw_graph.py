@@ -43,7 +43,7 @@ def create_graph():
 
     # Assign a unique color to each community using a rainbow color scheme
     community_colors = {node: partition.get(node) for node in G.nodes()}
-    num_colors = max(list(community_colors.values())) + 1
+    num_colors = min(max(list(community_colors.values())) + 1, 360)
     color_scale = [f'hsl({h},80%,50%)' for h in range(0, 360, int(360 / num_colors))]
 
     pos[token_sym] = [0, 0]
