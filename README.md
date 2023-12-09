@@ -8,10 +8,7 @@ This repository contains a Python script that generates a distribution graph for
 ## Table of Contents
 
 - [Overview](#overview)
-- [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 
@@ -27,7 +24,7 @@ The key features of this repository include:
 ## Usage
 
 To use this script, follow these steps:
-1. Make sure you have Python installed on your system. You can download and install Python from the official python website.
+1. Make sure you have Python installed on your system. You can download and install Python from the [official python website](https://www.python.org/downloads/).
 2. Make sure you have created a Covalent and an Etherscan API key. You can setup one from [Covalent](https://www.covalenthq.com/docs/api/) and [Etherscan](https://etherscan.io/) official website.
 3. Clone the repository to your local machine:
 
